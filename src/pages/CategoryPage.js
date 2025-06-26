@@ -34,10 +34,15 @@ const CategoryPage = () => {
       <div className="container">
         <div className="pt-10"></div>
         <Heading>Danh mục {param.slug}</Heading>
-        <div className="grid-layout grid-layout--primary">
+        <div className="flex gap-4 overflow-x-auto md:flex-wrap md:overflow-x-visible">
           {posts.length > 0 &&
             posts.map((data) => (
-              <PostItem key={data.id} data={data}></PostItem>
+              <div
+                key={data.id}
+                className="flex-shrink-0 w-[280px] md:flex-1 md:w-auto md:min-w-[300px]"
+              >
+                <PostItem data={data}></PostItem>
+              </div>
             ))}
         </div>
       </div>

@@ -26,9 +26,16 @@ const PostRelate = ({ categoryId = "" }) => {
   return (
     <div className="post-related">
       <Heading>Bài viết liên quan</Heading>
-      <div className="grid-layout grid-layout--primary">
+      <div className="flex gap-4 overflow-x-auto md:flex-wrap md:overflow-x-visible">
         {post.length > 0 &&
-          post.map((data) => <PostItem key={data.id} data={data}></PostItem>)}
+          post.map((data) => (
+            <div
+              key={data.id}
+              className="flex-shrink-0 w-[280px] md:flex-1 md:w-auto md:min-w-[300px]"
+            >
+              <PostItem data={data}></PostItem>
+            </div>
+          ))}
       </div>
     </div>
   );

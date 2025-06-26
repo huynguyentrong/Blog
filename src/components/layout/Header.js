@@ -1,8 +1,8 @@
 import { Button } from "components/button";
 import { useAuth } from "contexts/auth-context";
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import styled from "styled-components";
+
 const menuLinks = [
   {
     url: "/",
@@ -18,144 +18,135 @@ const menuLinks = [
   },
 ];
 
-const HeaderStyles = styled.header`
-  padding: 20px 0;
-  .header-main {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header-auth {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .logo {
-    display: block;
-    max-width: 50px;
-  }
-  .menu {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-left: 40px;
-    list-style: none;
-    font-weight: 500;
-  }
-  .search {
-    margin-left: auto;
-    padding: 15px 25px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 320px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    margin-right: 20px;
-  }
-  .search-input {
-    flex: 1;
-    padding-right: 45px;
-    font-weight: 500;
-  }
-  .search-icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 25px;
-  }
-  @media screen and (max-width: 1023.98px) {
-    .logo {
-      max-width: 30px;
-    }
-    .menu,
-    .search,
-    .header-button,
-    .header-auth {
-      display: none;
-    }
-  }
-`;
 const Header = () => {
   const { userInfo } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
-    <HeaderStyles>
-      <div className="container">
-        <div className="header-main">
-          <NavLink to="/">
-            <img srcSet="/logo.png 2x" alt="monkey-blogging" className="logo" />
+    <header className="py-5 lg:py-6">
+      <div className="container px-4 mx-auto">
+        <div className="flex items-center justify-between">
+          <NavLink to="/" className="block">
+            <img
+              srcSet="/logo.png 2x"
+              alt="monkey-blogging"
+              className="w-8 sm:w-10 lg:w-12 xl:w-[50px] max-w-[50px]"
+            />
           </NavLink>
-          <ul className="menu">
+
+          {/* Desktop Menu */}
+          <ul className="items-center hidden gap-5 ml-10 font-medium list-none lg:flex">
             {menuLinks.map((item) => (
-              <li className="menu-item" key={item.title}>
-                <NavLink to={item.url} className="menu-link">
+              <li key={item.title}>
+                <NavLink
+                  to={item.url}
+                  className="font-medium text-gray-700 transition-colors duration-300 hover:text-blue-600"
+                >
                   {item.title}
                 </NavLink>
               </li>
             ))}
           </ul>
-          {/* <div className="search">
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search posts..."
-            />
-            <span className="search-icon">
-              <svg
-                width="18"
-                height="17"
-                viewBox="0 0 18 17"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <ellipse
-                  cx="7.66669"
-                  cy="7.05161"
-                  rx="6.66669"
-                  ry="6.05161"
-                  stroke="#999999"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M17.0001 15.5237L15.2223 13.9099L14.3334 13.103L12.5557 11.4893"
-                  stroke="#999999"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M11.6665 12.2964C12.9671 12.1544 13.3706 11.8067 13.4443 10.6826"
-                  stroke="#999999"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-          </div> */}
-          {!userInfo ? (
-            <Button
-              type="button"
-              height="56px"
-              className="header-button"
-              to="/sign-in"
-            >
-              Login
-            </Button>
-          ) : (
-            <div className="header-auth">
+          {/* Desktop Auth */}
+          <div className="hidden lg:block">
+            {!userInfo ? (
               <Button
                 type="button"
                 height="56px"
                 className="header-button"
-                to="/dashboard"
+                to="/sign-in"
               >
-                Dashboard
+                Login
               </Button>
+            ) : (
+              <div className="flex items-center gap-5">
+                <Button
+                  type="button"
+                  height="56px"
+                  className="header-button"
+                  to="/dashboard"
+                >
+                  Dashboard
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="z-50 flex flex-col items-center justify-center w-8 h-6 cursor-pointer lg:hidden"
+            onClick={toggleMenu}
+          >
+            <span
+              className={`block w-6 h-0.5 bg-gray-800 transition-all duration-300 ${
+                isMenuOpen ? "rotate-45 translate-y-1.5" : ""
+              }`}
+            ></span>
+            <span
+              className={`block w-6 h-0.5 bg-gray-800 my-1 transition-all duration-300 ${
+                isMenuOpen ? "opacity-0" : ""
+              }`}
+            ></span>
+            <span
+              className={`block w-6 h-0.5 bg-gray-800 transition-all duration-300 ${
+                isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+              }`}
+            ></span>
+          </button>
+
+          {/* Mobile Menu Overlay */}
+          <div
+            className={`lg:hidden fixed inset-0 bg-white/95 backdrop-blur-md z-40 transition-transform duration-300 ${
+              isMenuOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
+            <div className="flex flex-col items-center justify-center h-full gap-8 px-6">
+              {/* Mobile Menu Links */}
+              {menuLinks.map((item) => (
+                <NavLink
+                  key={item.title}
+                  to={item.url}
+                  className="text-xl font-medium text-gray-700 transition-colors duration-300 hover:text-blue-600"
+                  onClick={closeMenu}
+                >
+                  {item.title}
+                </NavLink>
+              ))}
+              {/* Mobile Auth */}
+              <div className="mt-4">
+                {!userInfo ? (
+                  <Button
+                    type="button"
+                    height="48px"
+                    to="/sign-in"
+                    onClick={closeMenu}
+                  >
+                    Login
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    height="48px"
+                    to="/dashboard"
+                    onClick={closeMenu}
+                  >
+                    Dashboard
+                  </Button>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
-    </HeaderStyles>
+    </header>
   );
 };
 

@@ -42,7 +42,12 @@ const PostItem = ({ data }) => {
   const formatDate = new Date(date).toLocaleDateString("vi-VI");
   return (
     <PostItemStyles>
-      <PostImage url={data.image} alt="" to={data.slug}></PostImage>
+      <PostImage
+        url={data.image}
+        alt=""
+        to={data.slug}
+        className="post-image"
+      ></PostImage>
       <PostCategory to={data.category?.slug}>
         {data.category?.name}
       </PostCategory>

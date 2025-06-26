@@ -10,11 +10,10 @@ import {
 } from "firebase/firestore";
 import PostFeatureItem from "module/post/PostFeatureItem";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-const HomeFeatureStyles = styled.div``;
 
 const HomeFeature = () => {
   const [posts, setPosts] = useState([]);
+
   useEffect(() => {
     const colRef = collection(db, "posts");
     const queries = query(
@@ -31,18 +30,22 @@ const HomeFeature = () => {
       setPosts(result);
     });
   }, []);
+
   if (posts.length <= 0) return null;
+
   return (
-    <HomeFeatureStyles className="home-block">
-      <div className="container">
-        <Heading>Bài viết nổi bật</Heading>
-        <div className="grid-layout">
+    <div className="mb-8 md:mb-12 lg:mb-16">
+      <div className="container px-4 mx-auto">
+        <div className="mb-6 md:mb-8 lg:mb-10">
+          <Heading>Bài viết nổi bật</Heading>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 lg:gap-8 xl:gap-10">
           {posts.map((post) => (
             <PostFeatureItem key={post.id} data={post}></PostFeatureItem>
           ))}
         </div>
       </div>
-    </HomeFeatureStyles>
+    </div>
   );
 };
 

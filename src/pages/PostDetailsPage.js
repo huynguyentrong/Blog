@@ -10,100 +10,13 @@ import PostMeta from "module/post/PostMeta";
 import PostRelate from "module/post/PostRelate";
 import React from "react";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
 import PageNotFound from "./NotFoundPage";
-
-const PostDetailsPageStyles = styled.div`
-  padding-bottom: 100px;
-  .post {
-    &-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 40px;
-      margin: 40px 0;
-    }
-    &-feature {
-      width: 100%;
-      max-width: 640px;
-      height: 466px;
-      border-radius: 20px;
-    }
-    &-heading {
-      font-weight: bold;
-      font-size: 36px;
-      margin-bottom: 16px;
-    }
-    &-info {
-      flex: 1;
-    }
-    &-content {
-      max-width: 700px;
-      margin: 80px auto;
-    }
-  }
-  .author {
-    margin-top: 40px;
-    margin-bottom: 80px;
-    display: flex;
-    border-radius: 20px;
-    background-color: ${(props) => props.theme.grayF3};
-    &-image {
-      width: 200px;
-      height: 200px;
-      flex-shrink: 0;
-      border-radius: inherit;
-    }
-    &-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: inherit;
-    }
-    &-content {
-      flex: 1;
-      padding: 20px;
-    }
-    &-name {
-      font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 20px;
-    }
-    &-desc {
-      font-size: 14px;
-      line-height: 2;
-    }
-  }
-  @media screen and (max-width: 1023.98px) {
-    padding-bottom: 40px;
-    .post {
-      &-header {
-        flex-direction: column;
-      }
-      &-feature {
-        height: auto;
-      }
-      &-heading {
-        font-size: 26px;
-      }
-      &-content {
-        margin: 40px 0;
-      }
-    }
-    .author {
-      flex-direction: column;
-      &-image {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-`;
 
 const PostDetailsPage = () => {
   const { slug } = useParams();
   const [postInfo, setPostInfo] = React.useState({});
   const { user } = postInfo;
+
   React.useEffect(() => {
     async function fetchData() {
       if (!slug) {
@@ -128,47 +41,79 @@ const PostDetailsPage = () => {
     }
     fetchData();
   }, [slug]);
+
   React.useEffect(() => {
     document.body.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [slug]);
+
   if (!slug) return <PageNotFound></PageNotFound>;
+
   return (
-    <PostDetailsPageStyles>
+    <div className="pb-20 lg:pb-25">
       <Layout>
-        <div className="container">
-          <div className="post-header">
-            <PostImage
-              url={postInfo?.image}
-              className="post-feature"
-            ></PostImage>
-            <div className="post-info">
-              <PostCategory className="mb-6" to={postInfo.category?.slug}>
+        <div className="container px-4 mx-auto">
+          {/* Post Header */}
+          <div className="flex flex-col items-start justify-between gap-6 my-8 post-header lg:flex-row lg:items-center lg:gap-10 lg:my-10">
+            {/* Featured Image */}
+            <div className="w-full lg:max-w-2xl">
+              <PostImage
+                url={postInfo?.image}
+                className="object-cover w-full h-64 sm:h-80 lg:h-96 rounded-2xl"
+              />
+            </div>
+
+            {/* Post Info */}
+            <div className="flex-1 w-full lg:w-auto">
+              <PostCategory
+                className="mb-4 lg:mb-6"
+                to={postInfo.category?.slug}
+              >
                 {postInfo?.category?.name}
               </PostCategory>
-              <h1 className="post-heading">{postInfo?.title}</h1>
-              <PostMeta></PostMeta>
+
+              <h1 className="mb-4 text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl lg:mb-6">
+                {postInfo?.title}
+              </h1>
+
+              <PostMeta />
             </div>
           </div>
-          <div className="post-content">
-            <div className="entry-content">
+
+          {/* Post Content */}
+          <div className="max-w-4xl mx-auto mt-12 post-content lg:mt-20">
+            {/* Entry Content */}
+            <div className="mb-12 prose prose-lg entry-content max-w-none lg:mb-20">
               {parse(postInfo?.content || "")}
             </div>
-            <div className="author">
-              <div className="author-image">
-                <img src={user?.avatar} alt="" />
+
+            {/* Author Section */}
+            <div className="flex flex-col p-6 mb-12 author sm:flex-row bg-gray-50 rounded-2xl lg:p-8 lg:mb-20">
+              {/* Author Image */}
+              <div className="flex-shrink-0 w-full h-48 mb-6 author-image sm:w-48 lg:w-52 lg:h-52 sm:mb-0 sm:mr-6 lg:mr-8">
+                <img
+                  src={user?.avatar}
+                  alt={user?.fullname || "Author"}
+                  className="object-cover w-full h-full rounded-2xl"
+                />
               </div>
-              <div className="author-content">
-                <h3 className="author-name">{user?.fullname}</h3>
-                <p className="author-desc">
+
+              {/* Author Content */}
+              <div className="flex-1 author-content">
+                <h3 className="mb-2 text-lg font-bold lg:text-xl lg:mb-4">
+                  {user?.fullname}
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-600 lg:text-base">
                   {user?.description || "No description available."}
                 </p>
               </div>
             </div>
           </div>
-          <PostRelate categoryId={postInfo.category?.id}></PostRelate>
+
+          {/* Related Posts */}
+          <PostRelate categoryId={postInfo.category?.id} />
         </div>
       </Layout>
-    </PostDetailsPageStyles>
+    </div>
   );
 };
 
